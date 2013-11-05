@@ -23,7 +23,7 @@ public:
 	virtual void* onMessage(int msg, void*p1, void *p2);
 
 private:
-	ENUMCLASS(eBLOCKTYPE,char) {
+	enum eBLOCKTYPE {
 		EMPTY,
 		NORMAL1,
 		NORMAL2,
@@ -33,13 +33,13 @@ private:
 		NORMAL6,
 		SPECIAL
 	};
-	ENUMCLASS(eCELLSTATE,char) {
+	enum eCELLSTATE {
 		CELLEMPTY,
 		HOLD,
 		BLINK,
 		REMOVEEFFECTING,
 	};
-	ENUMCLASS(eSTATE,char) {
+	enum eSTATE {
 		FALLDOWN,
 		CHECKWAIT,
 		EFFECTBLINK,

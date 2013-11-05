@@ -2,6 +2,18 @@
 
 G g;
 
+#ifndef WIN32
+static int canRecv(int fd)
+{
+	fd_set fdset;
+	struct timeval timeout;
+ 	FD_ZERO( &fdset );
+	FD_SET( fd , &fdset );
+	timeout.tv_sec = 0;
+	timeout.tv_usec = 0;
+	return select( fd+1 , &fdset , NULL , NULL , &timeout );
+}
+#endif
 
 void G::onUpdate()
 {
@@ -29,21 +41,12 @@ void G::onUpdate()
 	if( keys['S']&0x80 )
 		nkey |= KEY_DOWN;
 #else
-	auto canRecv = [](int fd)->int{
-		fd_set fdset;
-		struct timeval timeout;
-		FD_ZERO( &fdset );
-		FD_SET( fd , &fdset );
-		timeout.tv_sec = 0;
-		timeout.tv_usec = 0;
-		return select( fd+1 , &fdset , NULL , NULL , &timeout );
-	};
 	while( canRecv(0) ) {
 		char k;
 		read(0,&k,1);
 		if( k == 0 )
 			break;
-		k = tolower(k);
+		k = k | 0x20;
 		if( k == 'a' )
 			nkey |= KEY_LEFT;
 		if( k == 'd' )

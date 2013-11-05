@@ -2,7 +2,7 @@
 
 int main(int argc, char* argv[])
 {
-	init_genrand(timeGetTime());
+	init_genrand(getMS());
 	COUTHANDLE hOUT = ConsoleInit();
 	g.pTaskMan = new TaskMan();
 	g.keys = 0;
@@ -22,10 +22,6 @@ int main(int argc, char* argv[])
 	}
 	delete g.pTaskMan;
 
-#ifndef WIN32
-	tcsetattr(0, TCSANOW, &saveAttr);
-#endif
-	
 	return 0;
 }
 

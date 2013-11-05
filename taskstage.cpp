@@ -2,8 +2,8 @@
 
 void taskStage::CELLINFO::empty()
 {
-	type = eBLOCKTYPE::EMPTY;
-	state = eCELLSTATE::CELLEMPTY;
+	type = EMPTY;
+	state = CELLEMPTY;
 }
 taskStage::taskStage()
 {
@@ -12,7 +12,7 @@ taskStage::taskStage()
 			blocks[y][x].empty();
 	RefreshBlock();
 	counter = fallSpeed = FALLSPEED;
-	state = eSTATE::FALLDOWN;
+	state = FALLDOWN;
 	score = 0;
 }
 
@@ -32,26 +32,26 @@ bool taskStage::onInitTask()
 void taskStage::RefreshBlock()
 {
 	for( int i=0; i<NUMBLOCK; i++ )
-		cursorBlock[i] = (eBLOCKTYPE)( (int)eBLOCKTYPE::NORMAL1+(int)(genrand_res53()*6) );
+		cursorBlock[i] = (eBLOCKTYPE)( (int)NORMAL1+(int)(genrand_res53()*6) );
 	cx = CELLW/2;
 	cy = 0;
 }
 char taskStage::BlockChar(eBLOCKTYPE type)
 {
 	switch( type ) {
-		case eBLOCKTYPE::NORMAL1:	return '1';
-		case eBLOCKTYPE::NORMAL2:	return '2';
-		case eBLOCKTYPE::NORMAL3:	return '3';
-		case eBLOCKTYPE::NORMAL4:	return '4';
-		case eBLOCKTYPE::NORMAL5:	return '5';
-		case eBLOCKTYPE::NORMAL6:	return '6';
-		case eBLOCKTYPE::SPECIAL:	return '*';
-		default:					return ' ';
+		case NORMAL1:	return '1';
+		case NORMAL2:	return '2';
+		case NORMAL3:	return '3';
+		case NORMAL4:	return '4';
+		case NORMAL5:	return '5';
+		case NORMAL6:	return '6';
+		case SPECIAL:	return '*';
+		default:	return ' ';
 	}
 }
 bool taskStage::BlockDown()
 {
-	if( cy+1>=CELLH || blocks[cy+1][cx].type != eBLOCKTYPE::EMPTY )
+	if( cy+1>=CELLH || blocks[cy+1][cx].type != EMPTY )
 		return true;
 	cy++;
 	return false;
@@ -60,7 +60,7 @@ bool taskStage::BlockCheck(CELLINFO *p, CELLINFO *p1, CELLINFO *p2 )
 {
 	if( p->type!=p1->type || p->type!=p2->type)
 		return false;
-	p2->state = p1->state = p->state = eCELLSTATE::REMOVEEFFECTING;
+	p2->state = p1->state = p->state = REMOVEEFFECTING;
 	return true;
 }
 bool taskStage::BlockCheck()
@@ -69,7 +69,7 @@ bool taskStage::BlockCheck()
 	for( int y=0; y<CELLH; y++ ) {
 		for( int x=0; x<CELLW; x++ ) {
 			CELLINFO *p1, *p2, *p = &blocks[y][x];
-			if( p->type == eBLOCKTYPE::EMPTY )
+			if( p->type == EMPTY )
 				continue;
 			bool w=false, h=false;
 			if( y>=1 && y<CELLH-1 ){
@@ -104,7 +104,7 @@ void taskStage::BlockFreeze()
 {
 	for( int i=0; i<NUMBLOCK; i++ ) {
 		blocks[cy-i][cx].type = cursorBlock[i];
-		blocks[cy-i][cx].state = eCELLSTATE::HOLD;
+		blocks[cy-i][cx].state = HOLD;
 	}
 }
 void taskStage::onUpdate(COUTHANDLE hOUT)
@@ -113,27 +113,27 @@ void taskStage::onUpdate(COUTHANDLE hOUT)
 	if( counter<0 ) {
 		switch( state )
 		{
-			case eSTATE::FALLDOWN:
+			case FALLDOWN:
 				counter = fallSpeed;
 				if( BlockDown() ) {
 					BlockFreeze();
-					state = eSTATE::CHECKWAIT;
+					state = CHECKWAIT;
 				}
 				break;
-			case eSTATE::CHECKWAIT:
+			case CHECKWAIT:
 				if( BlockCheck() ) {
-					state = eSTATE::EFFECTBLINK;
+					state = EFFECTBLINK;
 					counter = BLINKFRAME;
 				}else{
 					RefreshBlock();
 					counter = fallSpeed;
-					state = eSTATE::FALLDOWN;
+					state = FALLDOWN;
 				}
 				break;
-			case eSTATE::EFFECTBLINK:
+			case EFFECTBLINK:
 				for( int y=0; y<CELLH; y++ ) {
 					for( int x=0; x<CELLW; x++ ) {
-						if( blocks[y][x].state != eCELLSTATE::REMOVEEFFECTING )
+						if( blocks[y][x].state != REMOVEEFFECTING )
 							continue;
 						blocks[y][x].empty();
 						score++;
@@ -141,10 +141,10 @@ void taskStage::onUpdate(COUTHANDLE hOUT)
 				}
 				for( int x=0; x<CELLW; x++ ) {
 					for( int y=CELLH-1; y>0; y-- ) {
-						if( blocks[y][x].type!=eBLOCKTYPE::EMPTY )
+						if( blocks[y][x].type!=EMPTY )
 							continue;
 						for( int y2=y-1; y2>=0; y2-- ) {
-							if( blocks[y2][x].type==eBLOCKTYPE::EMPTY )
+							if( blocks[y2][x].type==EMPTY )
 								continue;
 							blocks[y][x] = blocks[y2][x];
 							blocks[y2][x].empty();
@@ -152,13 +152,13 @@ void taskStage::onUpdate(COUTHANDLE hOUT)
 						}
 					}
 				}
-				state = eSTATE::CHECKWAIT;
+				state = CHECKWAIT;
 				break;
 		}
 	}
 
 	// input
-	if( state==eSTATE::FALLDOWN )
+	if( state==FALLDOWN )
 	{
 		if( g.keyTrg & KEY_ROTATION ) {
 			eBLOCKTYPE type = cursorBlock[0];
@@ -170,7 +170,7 @@ void taskStage::onUpdate(COUTHANDLE hOUT)
 		if( cx > 0 && g.keyTrg & KEY_LEFT ) {
 			bool isHit = false;
 			for( int i=0; i<NUMBLOCK; i++ ) {
-				if( cy-i>=0 && blocks[cy-i][cx-1].type != eBLOCKTYPE::EMPTY ) {
+				if( cy-i>=0 && blocks[cy-i][cx-1].type != EMPTY ) {
 					isHit = true;
 					break;
 				}
@@ -181,7 +181,7 @@ void taskStage::onUpdate(COUTHANDLE hOUT)
 		if( cx < CELLW-1 && g.keyTrg & KEY_RIGHT ) {
 			bool isHit = false;
 			for( int i=0; i<NUMBLOCK; i++ ) {
-				if( cy-i>=0 && blocks[cy-i][cx+1].type != eBLOCKTYPE::EMPTY ) {
+				if( cy-i>=0 && blocks[cy-i][cx+1].type != EMPTY ) {
 					isHit = true;
 					break;
 				}
@@ -210,14 +210,14 @@ void taskStage::draw(COUTHANDLE hOUT)
 	
 	// wall
 	bool isEffectBlink = true;
-	if( state==eSTATE::EFFECTBLINK && (counter/10)&1 )
+	if( state==EFFECTBLINK && (counter/10)&1 )
 		isEffectBlink = false;
 	char lineBuff[1000];
 	for( int y=0; y<CELLH; y++ ) {
 		char *p = lineBuff;
 		*(p++) = '#';
 		for( int x=0; x<CELLW; x++ ) {
-			if( blocks[y][x].state == eCELLSTATE::REMOVEEFFECTING && isEffectBlink==false )
+			if( blocks[y][x].state ==REMOVEEFFECTING && isEffectBlink==false )
 				*(p++) = '-';
 			else
 				*(p++) = BlockChar( blocks[y][x].type );
@@ -231,7 +231,7 @@ void taskStage::draw(COUTHANDLE hOUT)
 		ConsolePrintLine(hOUT, "#" );
 	
 	// cursorBlock
-	if( state==eSTATE::FALLDOWN ) {
+	if( state==FALLDOWN ) {
 		for( int i=0; i<NUMBLOCK; i++ )
 			PrintBlock(hOUT,cx+1,cy-i,cursorBlock[i]);
 	}

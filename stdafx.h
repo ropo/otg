@@ -13,7 +13,11 @@
  #include <fcntl.h>
  #include <sys/time.h>
  typedef int COUTHANDLE;
- #define ENUMCLASS(n,t)	enum class n : t
+#ifdef __Linux__
+ #define ENUMCLASS(n,t)	enum n
+#else
+ #define ENUMCLASS(n,t) enum class n : t
+#endif
 #endif
 
 #include <stdio.h>

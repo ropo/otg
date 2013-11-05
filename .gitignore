@@ -12,7 +12,7 @@ bin/
 
 *.wav
 *.mp3
-
+*.o
 *.sdf
 *.suo
 *.vcxproj.user
