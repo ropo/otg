@@ -1,3 +1,5 @@
 #pragma once
 
-#include <SDKDDKVer.h>
+#ifdef WIN32
+ #include <SDKDDKVer.h>
+#endif

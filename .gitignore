@@ -3,6 +3,12 @@ Release/
 ipch/
 obj/
 bin/
+*.xcworkspace/*
+!*.xcworkspace/contents.xcworkspacedata
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+.DS_Store
+*.ipa
 
 *.wav
 *.mp3

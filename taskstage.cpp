@@ -46,12 +46,12 @@ char taskStage::BlockChar(eBLOCKTYPE type)
 		case eBLOCKTYPE::NORMAL5:	return '5';
 		case eBLOCKTYPE::NORMAL6:	return '6';
 		case eBLOCKTYPE::SPECIAL:	return '*';
+		default:					return ' ';
 	}
-	return ' ';
 }
 bool taskStage::BlockDown()
 {
-	if( cy+1>=CELLH || blocks[cy+1][cx].type != EMPTY )
+	if( cy+1>=CELLH || blocks[cy+1][cx].type != eBLOCKTYPE::EMPTY )
 		return true;
 	cy++;
 	return false;
@@ -107,23 +107,8 @@ void taskStage::BlockFreeze()
 		blocks[cy-i][cx].state = eCELLSTATE::HOLD;
 	}
 }
-void taskStage::onUpdate(HANDLE hOUT)
+void taskStage::onUpdate(COUTHANDLE hOUT)
 {
-	auto Locate = [&hOUT](int x, int y){
-		COORD c={x,y};
-		SetConsoleCursorPosition(hOUT,c);
-	};
-	auto PrintLine = [&hOUT](const char *pStr){
-		WriteFile( hOUT, pStr, strlen(pStr), NULL, NULL );
-	};
-	auto PrintBlock = [&](int x, int y, eBLOCKTYPE type){
-		if( y<0 )	return;
-		Locate(x,y);
-		char buf[2]={BlockChar(type),0};
-		PrintLine(buf);
-	};
-	Locate(0,0);
-
 	counter--;
 	if( counter<0 ) {
 		switch( state )
@@ -208,9 +193,39 @@ void taskStage::onUpdate(HANDLE hOUT)
 			counter = FALLSPEEDUP;
 	}
 
-	// ŠO•Ç
+	draw(hOUT);
+}
+
+void taskStage::draw(COUTHANDLE hOUT)
+{
+#ifdef WIN32
+	auto Locate = [&hOUT](int x, int y){
+		COORD c={x,y};
+		SetConsoleCursorPosition(hOUT,c);
+	};
+	auto PrintLine = [&hOUT](const char *pStr){
+		WriteFile( hOUT, pStr, strlen(pStr), NULL, NULL );
+	};
+#else
+	auto Locate = [&hOUT](int x, int y){
+		printf("\e[%d;%dH",y+1,x+1);
+	};
+	auto PrintLine = [&hOUT](const char *pStr){
+		printf("%s",pStr);
+	};
+#endif
+	auto PrintBlock = [&](int x, int y, eBLOCKTYPE type){
+		if( y<0 )	return;
+		Locate(x,y);
+		char buf[2]={BlockChar(type),0};
+		PrintLine(buf);
+	};
+	
+	Locate(0,0);
+	
+	// å¤–å£
 	bool isEffectBlink = true;
-	if( state==eSTATE::EFFECTBLINK && (counter/20)&1 )
+	if( state==eSTATE::EFFECTBLINK && (counter/10)&1 )
 		isEffectBlink = false;
 	char lineBuff[1000];
 	for( int y=0; y<CELLH; y++ ) {
@@ -229,20 +244,25 @@ void taskStage::onUpdate(HANDLE hOUT)
 	}
 	for( int x=0; x<CELLW+2; x++ )
 		PrintLine( "#" );
-
-	// ƒJ[ƒ\ƒ‹
+	
+	// ã‚«ãƒ¼ã‚½ãƒ«
 	if( state==eSTATE::FALLDOWN ) {
 		for( int i=0; i<NUMBLOCK; i++ )
 			PrintBlock(cx+1,cy-i,cursorBlock[i]);
 	}
-
-	// ‚·‚±‚ 
-	Locate( CELLW+5, 1 );
+	
+	// ã™ã“ã‚
+	Locate( CELLW+4, 1 );
 	sprintf(lineBuff,"SCORE:%d\n", score );
 	PrintLine( lineBuff );
 	Locate( 0, CELLH+3 );
-	PrintLine( "A < > D  GameExit:[Escape]\n" );
-	PrintLine( "   S     Rotation:[SPACE]or[Enter]" );
+#ifdef WIN32
+	PrintLine( "[A]< >[D] ExitGame:[Escape]\n" );
+	PrintLine( "   [S]    Rotation:[SPACE]or[Enter]" );
+#else
+	PrintLine( "[A]< >[D] ExitGame:[q]\n" );
+	PrintLine( "   [S]    Rotation:[SPACE]" );
+#endif
 }
 
 void* taskStage::onMessage(int msg, void*p1, void *p2)

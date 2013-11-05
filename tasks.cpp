@@ -18,7 +18,7 @@ TaskMan::~TaskMan()
 {
 }
 
-void TaskMan::onUpdate(HANDLE hOUT)
+void TaskMan::onUpdate(COUTHANDLE hOUT)
 {
 	for(auto itr=tasks.begin(); itr!=tasks.end(); ++itr ) {
 		TASKINFO *pTI = &*itr;
