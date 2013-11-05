@@ -12,4 +12,4 @@
 
 ・Windowsの実行ファイルはこちら
 　https://www.dropbox.com/s/sh4dzckdbq691oz/otg1.zip
-・OSXの実行ファイルは都合によりなし
+・OSX/Linuxの実行ファイルは都合によりなし
