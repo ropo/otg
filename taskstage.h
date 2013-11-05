@@ -18,12 +18,12 @@ public:
 	virtual void onAddTask();
 	virtual void onReleaseTask();
 	virtual bool onInitTask();
-	virtual void onUpdate(HANDLE hOUT);
+	virtual void onUpdate(COUTHANDLE hOUT);
 
 	virtual void* onMessage(int msg, void*p1, void *p2);
 
 private:
-	enum eBLOCKTYPE {
+	ENUMCLASS(eBLOCKTYPE,char) {
 		EMPTY,
 		NORMAL1,
 		NORMAL2,
@@ -33,13 +33,13 @@ private:
 		NORMAL6,
 		SPECIAL
 	};
-	enum eCELLSTATE {
+	ENUMCLASS(eCELLSTATE,char) {
 		CELLEMPTY,
 		HOLD,
 		BLINK,
 		REMOVEEFFECTING,
 	};
-	enum eSTATE {
+	ENUMCLASS(eSTATE,char) {
 		FALLDOWN,
 		CHECKWAIT,
 		EFFECTBLINK,
@@ -68,4 +68,6 @@ private:
 	bool BlockCheck();
 	bool BlockCheck(CELLINFO *p, CELLINFO *p1, CELLINFO *p2);
 	void BlockFreeze();
+	
+	void draw(COUTHANDLE hOUT);
 };

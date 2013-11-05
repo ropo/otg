@@ -10,7 +10,7 @@ public:
 	virtual void onAddTask()=0;
 	virtual void onReleaseTask()=0;
 	virtual bool onInitTask()=0;
-	virtual void onUpdate(HANDLE hOUT)=0;
+	virtual void onUpdate(COUTHANDLE hOUT)=0;
 
 	virtual void* onMessage(int msg, void*p1, void *p2)=0;
 };
@@ -22,7 +22,7 @@ public:
 	TaskMan();
 	~TaskMan();
 
-	void onUpdate(HANDLE hOUT);
+	void onUpdate(COUTHANDLE hOUT);
 
 	void AddTask( TaskBase *pTask );
 	void ReleaseTask( TaskBase *pTask );

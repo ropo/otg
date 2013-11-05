@@ -2,10 +2,21 @@
 
 #include "targetver.h"
 
-#include <Windows.h>
+#ifdef WIN32
+ #include <Windows.h>
+ #include <tchar.h>
+ typedef HANDLE	COUTHANDLE;
+ #define ENUMCLASS(n,t) enum n
+#else
+ #include <unistd.h>
+ #include <termios.h>
+ #include <fcntl.h>
+ #include <sys/time.h>
+ typedef int COUTHANDLE;
+ #define ENUMCLASS(n,t)	enum class n : t
+#endif
 
 #include <stdio.h>
-#include <tchar.h>
 #include <algorithm>
 #include <list>
 #include <vector>
