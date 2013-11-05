@@ -69,5 +69,6 @@ private:
 	bool BlockCheck(CELLINFO *p, CELLINFO *p1, CELLINFO *p2);
 	void BlockFreeze();
 	
+	void PrintBlock(COUTHANDLE hOUT,int x, int y, eBLOCKTYPE type);
 	void draw(COUTHANDLE hOUT);
 };

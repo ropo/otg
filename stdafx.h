@@ -32,6 +32,12 @@
 #define KEY_DOWN	(1<<3)
 #define KEY_ROTATION (1<<4)
 
+COUTHANDLE ConsoleInit();
+void ConsoleLocate(COUTHANDLE hOUT, int x, int y);
+void ConsolePrintLine(COUTHANDLE hOUT, const char *pStr);
+void ConsoleClear(COUTHANDLE hOUT);
+unsigned int getMS();
+void mSleep(int ms);
 
 typedef struct tagG{
 	TaskMan *pTaskMan;
@@ -39,6 +45,8 @@ typedef struct tagG{
 	// input
 	int keys;
 	int keyTrg;
+
+	void onUpdate();
 }G;
 
 extern G g;

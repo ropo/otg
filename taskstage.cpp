@@ -196,34 +196,19 @@ void taskStage::onUpdate(COUTHANDLE hOUT)
 	draw(hOUT);
 }
 
+void taskStage::PrintBlock(COUTHANDLE hOUT,int x, int y, eBLOCKTYPE type)
+{
+	if( y<0 )	return;
+	ConsoleLocate(hOUT,x,y);
+	char buf[2]={BlockChar(type),0};
+	ConsolePrintLine(hOUT,buf);
+}
+
 void taskStage::draw(COUTHANDLE hOUT)
 {
-#ifdef WIN32
-	auto Locate = [&hOUT](int x, int y){
-		COORD c={x,y};
-		SetConsoleCursorPosition(hOUT,c);
-	};
-	auto PrintLine = [&hOUT](const char *pStr){
-		WriteFile( hOUT, pStr, strlen(pStr), NULL, NULL );
-	};
-#else
-	auto Locate = [&hOUT](int x, int y){
-		printf("\e[%d;%dH",y+1,x+1);
-	};
-	auto PrintLine = [&hOUT](const char *pStr){
-		printf("%s",pStr);
-	};
-#endif
-	auto PrintBlock = [&](int x, int y, eBLOCKTYPE type){
-		if( y<0 )	return;
-		Locate(x,y);
-		char buf[2]={BlockChar(type),0};
-		PrintLine(buf);
-	};
+	ConsoleLocate(hOUT,0,0);
 	
-	Locate(0,0);
-	
-	// 外壁
+	// wall
 	bool isEffectBlink = true;
 	if( state==eSTATE::EFFECTBLINK && (counter/10)&1 )
 		isEffectBlink = false;
@@ -240,28 +225,28 @@ void taskStage::draw(COUTHANDLE hOUT)
 		*(p++) = '#';
 		*(p++) = '\n';
 		*(p++) = '\0';
-		PrintLine( lineBuff );
+		ConsolePrintLine(hOUT, lineBuff );
 	}
 	for( int x=0; x<CELLW+2; x++ )
-		PrintLine( "#" );
+		ConsolePrintLine(hOUT, "#" );
 	
-	// カーソル
+	// cursorBlock
 	if( state==eSTATE::FALLDOWN ) {
 		for( int i=0; i<NUMBLOCK; i++ )
-			PrintBlock(cx+1,cy-i,cursorBlock[i]);
+			PrintBlock(hOUT,cx+1,cy-i,cursorBlock[i]);
 	}
 	
-	// すこあ
-	Locate( CELLW+4, 1 );
+	// score
+	ConsoleLocate( hOUT,CELLW+4, 1 );
 	sprintf(lineBuff,"SCORE:%d\n", score );
-	PrintLine( lineBuff );
-	Locate( 0, CELLH+3 );
+	ConsolePrintLine(hOUT, lineBuff );
+	ConsoleLocate( hOUT,0, CELLH+3 );
 #ifdef WIN32
-	PrintLine( "[A]< >[D] ExitGame:[Escape]\n" );
-	PrintLine( "   [S]    Rotation:[SPACE]or[Enter]" );
+	ConsolePrintLine(hOUT, "[A]< >[D] ExitGame:[Escape]\n" );
+	ConsolePrintLine(hOUT, "   [S]    Rotation:[SPACE]or[Enter]" );
 #else
-	PrintLine( "[A]< >[D] ExitGame:[q]\n" );
-	PrintLine( "   [S]    Rotation:[SPACE]" );
+	ConsolePrintLine(hOUT, "[A]< >[D] ExitGame:[q]\n" );
+	ConsolePrintLine(hOUT, "   [S]    Rotation:[SPACE]" );
 #endif
 }
 
